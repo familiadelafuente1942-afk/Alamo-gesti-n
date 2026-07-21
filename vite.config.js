@@ -1,13 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { readFileSync } from "node:fs";
+
+const copyAssets = {
+  name: "copy-pwa-assets",
+  generateBundle() {
+    for (const f of ["favicon.svg", "icon-192.png", "icon-512.png"]) {
+      this.emitFile({ type: "asset", fileName: f, source: readFileSync(f) });
+    }
+  },
+};
 
 export default defineConfig({
+  publicDir: false,
   plugins: [
     react(),
+    copyAssets,
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "icon-192.png", "icon-512.png"],
       manifest: {
         name: "ALAMO · Gestión",
         short_name: "ALAMO",
